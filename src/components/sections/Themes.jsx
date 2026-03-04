@@ -1,0 +1,127 @@
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import SectionHeader from '../ui/SectionHeader';
+import { themes } from '../../data/themes';
+import salesforceLogo from '../../assets/gallery/logo/salesforce.jpeg';
+
+function ThemeModal({ theme, onClose }) {
+    return (
+        <AnimatePresence>
+            <motion.div
+                className="modal-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={onClose}
+                style={{ background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(8px)', zIndex: 10000 }}
+            >
+                <motion.div
+                    className="modal-box"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.9, opacity: 0 }}
+                    onClick={e => e.stopPropagation()}
+                    style={{ background: '#FFFFFF', border: '1px solid var(--border-light)', borderRadius: '24px', padding: '48px', maxWidth: '600px', width: '90%', boxShadow: 'var(--shadow-xl)', position: 'relative', maxHeight: '85vh', overflowY: 'auto' }}
+                >
+                    <button
+                        onClick={onClose}
+                        style={{ position: 'absolute', top: 24, right: 24, background: 'var(--bg-secondary)', border: 'none', color: 'var(--text-primary)', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}
+                    >✕</button>
+
+                    {theme.logo === 'salesforce' ? (
+                        <div style={{ marginBottom: '20px' }}>
+                            <img src={salesforceLogo} alt="Salesforce" style={{ height: '80px', objectFit: 'contain', marginBottom: '10px', borderRadius: '8px' }} />
+                        </div>
+                    ) : (
+                        <div style={{ fontSize: '3.5rem', marginBottom: '20px' }}>{theme.icon}</div>
+                    )}
+                    <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                        {theme.title}
+                    </h3>
+                    {theme.tagline && (
+                        <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#00A1E0', marginBottom: '16px', letterSpacing: '0.02em' }}>
+                            {theme.tagline}
+                        </p>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                        {theme.tags.map(t => (
+                            <span key={t} style={{ background: '#EFF6FF', color: 'var(--accent-primary)', fontSize: '0.75rem', fontWeight: 600, padding: '4px 12px', borderRadius: '100px', border: '1px solid #DBEAFE' }}>{t}</span>
+                        ))}
+                    </div>
+
+                    <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '1rem', marginBottom: '32px', whiteSpace: 'pre-wrap' }}>{theme.details}</p>
+
+                    <motion.a
+                        href="https://forms.gle/yby8D1xRLXTyrVRy7"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        Register for Track
+                    </motion.a>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
+    );
+}
+
+export default function Themes() {
+    const [selected, setSelected] = useState(null);
+
+    return (
+        <section id="themes" className="section alt">
+            <div className="container">
+                <SectionHeader
+                    tag="// Problem Statements"
+                    title="Hackathon"
+                    highlight="Themes"
+                    desc="Choose your track and build solutions that matter. Six cutting-edge domains to explore."
+                />
+                <div className="themes-grid">
+                    {themes.map((theme, i) => (
+                        <motion.div
+                            key={theme.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: i * 0.1 }}
+                            className="theme-card shadow-card hover-lift"
+                            onClick={() => setSelected(theme)}
+                        >
+                            {theme.logo === 'salesforce' ? (
+                                <div style={{ marginBottom: '12px' }}>
+                                    <img src={salesforceLogo} alt="Salesforce" style={{ height: '64px', objectFit: 'contain', borderRadius: '6px' }} />
+                                </div>
+                            ) : (
+                                <span style={{ fontSize: '3rem', marginBottom: '16px', display: 'block' }}>{theme.icon}</span>
+                            )}
+                            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>{theme.title}</div>
+                            {theme.tagline && (
+                                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#00A1E0', marginBottom: '12px', letterSpacing: '0.02em' }}>{theme.tagline}</div>
+                            )}
+                            <div style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '20px' }}>{theme.desc}</div>
+
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                                {theme.tags.map(t => (
+                                    <span key={t} style={{ background: '#F1F5F9', color: 'var(--text-secondary)', fontSize: '0.7rem', fontWeight: 600, padding: '3px 10px', borderRadius: '100px' }}>{t}</span>
+                                ))}
+                            </div>
+
+                            <button
+                                className="btn-secondary"
+                                style={{ width: '100%', padding: '12px' }}
+                                onClick={(e) => { e.stopPropagation(); setSelected(theme); }}
+                            >
+                                Track Details
+                            </button>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+            {selected && <ThemeModal theme={selected} onClose={() => setSelected(null)} />}
+        </section>
+    );
+}
